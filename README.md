@@ -1,4 +1,4 @@
-# Node-js authentication with jwt & Send real email api :tada:
+# Property Management System Server with Node-js authentication with jwt & Send real email api :tada:
 
 ## Getting Started
 ### Features :fire:
