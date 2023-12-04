@@ -11,7 +11,7 @@ const Profile = require("../models/profileModel");
 // Make JWT token
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: process.env.JWT_EXPIRES_IN.toString(),
   });
 };
 
@@ -150,6 +150,33 @@ exports.logIn = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.getUserById = catchAsync(async (req, res, next) => {
+  // Retrieve the user ID from the request parameters
+  const userId = req.params.id;
+
+  // Use Mongoose to find the user by ID
+  const user = await User.findOne({ _id: userId });
+
+  // Check if the user exists
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+    return next(new AppError("User not found", 404));
+  }
+  const profile = await Profile.findOne({ user: userId });
+
+  // Respond with the user data (excluding sensitive information like the password)
+  res.status(200).json({
+    success: true,
+    data: {
+      user,
+      profile,
+    },
+  });
+});
+
 exports.getAllUser = catchAsync(async (req, res, next) => {
   const users = await User.find();
 
@@ -206,10 +233,18 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
       .createHash("sha256")
       .update(req.params.token)
       .digest("hex");
+    console.log("====================================");
+    console.log(hashedToken.toString());
+    console.log("====================================");
     let user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     });
+
+    console.log("====================================");
+    console.log(user);
+    console.log("====================================");
+
     if (!user) {
       sendErrorResponse(res, "Token is invalid or has expired", 400);
       return next(new AppError("Token is invalid or has expired", 400));
@@ -222,6 +257,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     createSendToken(user, 200, res);
   } catch (error) {
     sendErrorResponse(res, "Internal Server error", 500, error);
+    console.log("====================================");
+    console.log(error);
+    console.log("====================================");
     return next(new AppError("Internal server error", 500));
   }
 });

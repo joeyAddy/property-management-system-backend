@@ -3,6 +3,7 @@ const {
   signUp,
   logIn,
   getAllUser,
+  getUserById,
   restrictTo,
   protect,
   forgotPassword,
@@ -14,13 +15,14 @@ const router = express.Router();
 
 router.post("/signup", signUp);
 router.post("/login", logIn);
+router.get("/:id", getUserById);
 router.post("/forgot-password", forgotPassword);
 router.patch("/reset-password/:token", resetPassword);
 router.patch("/update-password", protect, updatePassword);
 
 // Protect all routes after this (Only-Admin) middleware
-router.use(protect);
-router.use(restrictTo("admin"));
-router.route("/").get(getAllUser);
+// router.use(protect);
+// router.use(restrictTo("admin"));
+// router.route("/").get(getAllUser);
 
 module.exports = router;

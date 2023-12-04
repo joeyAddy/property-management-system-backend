@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  client: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  agent: { type: mongoose.Schema.Types.ObjectId, ref: "", required: true },
   property: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Property",
@@ -13,6 +14,7 @@ const paymentSchema = new mongoose.Schema({
     enum: ["pending", "success", "failed"],
     default: "pending",
   },
+
   paymentMethod: { type: String, required: true }, // e.g., "credit card", "bank transfer", etc.
   transactionId: { type: String, required: true }, // a unique identifier for the payment transaction
   createdAt: { type: Date, default: Date.now },
