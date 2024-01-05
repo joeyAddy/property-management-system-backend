@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const BuyoutController = require("../controllers/buyoutController");
+const BuyoutController = require("../controllers/buyOutController");
 
 router.post("/", BuyoutController.createBuyOut);
 router.get("/", BuyoutController.getAllBuyOuts);
